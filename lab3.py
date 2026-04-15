@@ -47,7 +47,7 @@ def draw_signal():
     canvas.get_tk_widget().pack()
 
     # 更新信息框
-    text_area.insert(tk.END, "✅ 绘制成功！\n")
+    text_area.insert(tk.END, "绘制成功！\n")
     text_area.insert(tk.END, "→ 连续余弦信号 + 离散阶跃信号\n\n")
 
 # ===================== 3. 按钮 =====================
