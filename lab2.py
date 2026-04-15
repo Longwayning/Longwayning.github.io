@@ -19,19 +19,19 @@ plt.figure(figsize=(12, 5))  # 设置画布大小
 
 # 子图1：连续信号
 plt.subplot(1, 2, 1)
-plt.plot(t_continuous, y_continuous, 'b-', linewidth=2, label='连续余弦信号')
-plt.title('连续信号')
-plt.xlabel('时间 t')
-plt.ylabel('幅值')
+plt.plot(t_continuous, y_continuous, 'b-', linewidth=2, label='Continuous Cosine Signal')
+plt.title('Continuous Signal')
+plt.xlabel('Time t')
+plt.ylabel('Amplitude')
 plt.grid(True)
 plt.legend()
 
 # 子图2：离散信号
 plt.subplot(1, 2, 2)
-plt.stem(n_discrete, y_discrete, 'r-', markerfmt='ro', label='离散阶跃信号')
-plt.title('离散信号')
-plt.xlabel('时间 n')
-plt.ylabel('幅值')
+plt.stem(n_discrete, y_discrete, 'r-', markerfmt='ro', label='Discrete Step Signal')
+plt.title('Discrete Signal')
+plt.xlabel('Time n')
+plt.ylabel('Amplitude')
 plt.grid(True)
 plt.legend()
 
