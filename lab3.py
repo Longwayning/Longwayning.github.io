@@ -1,62 +1,99 @@
-import tkinter as tk
-from tkinter import ttk, scrolledtext
-import numpy as np
-import matplotlib.pyplot as plt
-from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+import sys
+import random
+from PyQt5.QtWidgets import (QApplication, QMainWindow, QWidget, 
+                             QVBoxLayout, QHBoxLayout,
+                             QPushButton, QTextEdit, QLabel)
+from PyQt5.QtCore import Qt
+from PyQt5.QtGui import QPainter, QPen, QColor, QFont
 
-# 创建主界面
-root = tk.Tk()
-root.title("信号显示界面")
-root.geometry("900x550")
 
-# ===================== 1. 信息显示框 =====================
-text_area = scrolledtext.ScrolledText(root, width=30, height=15)
-text_area.place(x=20, y=20)
-text_area.insert(tk.END, "=== 信号显示系统 ===\n")
-text_area.insert(tk.END, "点击按钮绘制信号\n")
+# 图形显示区域
+class GraphicsWidget(QWidget):
+    def __init__(self):
+        super().__init__()
+        self.setMinimumSize(400, 250)
+        self.setStyleSheet("background-color:white; border:1px solid #333;")
+        self.points = []
 
-# ===================== 2. 绘图函数 =====================
-def draw_signal():
-    # 清空图像
-    for widget in frame_graph.winfo_children():
-        widget.destroy()
+    def paintEvent(self, event):
+        painter = QPainter(self)
+        painter.setRenderHint(QPainter.Antialiasing)
 
-    # 生成信号
-    t = np.linspace(0, 2*np.pi, 1000)
-    y1 = np.cos(t)
-    n = np.arange(-5, 10, 1)
-    y2 = np.where(n >= 0, 1, 0)
+        # 画坐标轴
+        pen = QPen(QColor("#555"), 2)
+        painter.setPen(pen)
+        painter.drawLine(50, 200, 350, 200)
+        painter.drawLine(50, 50, 50, 200)
 
-    # 创建图
-    fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(5, 4))
-    ax1.plot(t, y1, 'b-', linewidth=2, label="Continuous Cos")
-    ax1.set_title("Continuous Signal")
-    ax1.grid(True)
-    ax1.legend()
+        # 画随机点
+        pen = QPen(QColor("#ff4444"), 8)
+        painter.setPen(pen)
+        for x, y in self.points:
+            painter.drawPoint(x, y)
 
-    ax2.stem(n, y2, 'r-', markerfmt='ro', label="Discrete Step")
-    ax2.set_title("Discrete Signal")
-    ax2.grid(True)
-    ax2.legend()
+    def draw_random(self):
+        self.points = [(random.randint(60,340), random.randint(60,190)) for _ in range(15)]
+        self.update()
 
-    plt.tight_layout()
 
-    # 把图嵌入界面
-    canvas = FigureCanvasTkAgg(fig, master=frame_graph)
-    canvas.draw()
-    canvas.get_tk_widget().pack()
+# 主窗口
+class MainWindow(QMainWindow):
+    def __init__(self):
+        super().__init__()
+        self.setWindowTitle("PyQt5 GUI 界面")
+        self.setFixedSize(650, 500)
 
-    # 更新信息框
-    text_area.insert(tk.END, "绘制成功！\n")
-    text_area.insert(tk.END, "→ 连续余弦信号 + 离散阶跃信号\n\n")
+        # 主布局
+        central = QWidget()
+        self.setCentralWidget(central)
+        layout = QVBoxLayout(central)
+        layout.setSpacing(15)
+        layout.setContentsMargins(30,30,30,30)
 
-# ===================== 3. 按钮 =====================
-btn = ttk.Button(root, text="绘制连续/离散信号", command=draw_signal)
-btn.place(x=20, y=280)
+        # 标题
+        title = QLabel("PyQt5 图形界面演示")
+        title.setFont(QFont("Microsoft YaHei",14,QFont.Bold))
+        title.setAlignment(Qt.AlignCenter)
+        layout.addWidget(title)
 
-# ===================== 4. 图形显示框 =====================
-frame_graph = tk.Frame(root, width=500, height=480, bg="white")
-frame_graph.place(x=280, y=20)
+        # 图形显示框
+        self.canvas = GraphicsWidget()
+        layout.addWidget(self.canvas)
 
-# 启动界面
-root.mainloop()
+        # 按钮
+        btn_layout = QHBoxLayout()
+        self.btn1 = QPushButton("生成随机图形")
+        self.btn2 = QPushButton("输出信息")
+        self.btn3 = QPushButton("清空内容")
+        btn_layout.addWidget(self.btn1)
+        btn_layout.addWidget(self.btn2)
+        btn_layout.addWidget(self.btn3)
+        layout.addLayout(btn_layout)
+
+        # 信息显示框
+        self.text = QTextEdit()
+        self.text.setPlaceholderText("操作信息将显示在这里...")
+        layout.addWidget(self.text)
+
+        # 绑定事件
+        self.btn1.clicked.connect(self.draw)
+        self.btn2.clicked.connect(self.show_msg)
+        self.btn3.clicked.connect(self.clear)
+
+    def draw(self):
+        self.canvas.draw_random()
+        self.text.append("✅ 已生成随机图形")
+
+    def show_msg(self):
+        self.text.append("📢 PyQt5 GUI 运行成功！")
+
+    def clear(self):
+        self.text.clear()
+        self.text.append("🧹 已清空显示框")
+
+
+if __name__ == "__main__":
+    app = QApplication(sys.argv)
+    win = MainWindow()
+    win.show()
+    sys.exit(app.exec_())
