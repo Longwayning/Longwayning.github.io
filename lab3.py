@@ -26,7 +26,7 @@ class GraphicsWidget(QWidget):
         painter.drawLine(50, 50, 50, 200)
 
         # 画随机点
-        pen = QPen(QColor("#ff4444"), 8)
+        pen = QPen(QColor("#ff4744"), 8)
         painter.setPen(pen)
         for x, y in self.points:
             painter.drawPoint(x, y)
@@ -82,14 +82,14 @@ class MainWindow(QMainWindow):
 
     def draw(self):
         self.canvas.draw_random()
-        self.text.append("✅ 已生成随机图形")
+        self.text.append("已生成随机图形")
 
     def show_msg(self):
-        self.text.append("📢 PyQt5 GUI 运行成功！")
+        self.text.append("PyQt5 GUI 运行成功！")
 
     def clear(self):
         self.text.clear()
-        self.text.append("🧹 已清空显示框")
+        self.text.append("已清空显示框")
 
 
 if __name__ == "__main__":
